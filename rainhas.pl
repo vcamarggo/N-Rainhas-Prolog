@@ -8,15 +8,12 @@ rainhas_p(Q, N) :-
 	permutacao(R, Q),
 	solucao(Q).
 
-
 % permutacao(?L, ?P) is nondet
 % Verdadeiro se P é uma permutação da lista L
 permutacao(L, P) :-
-	% ... continuar
-	.
+	permutation(L,P).
 
 %% -------------------------- VERSÃO COM BACKTRACKING --------------------------
-
 % rainhas_n(?Q, +N) is nondet
 % predicado "interface" para o rainhas/3
 rainhas_n(Q, N) :-
@@ -41,6 +38,29 @@ rainhas_n([R|Rs], N, T) :-
 
 rainhas_n([], _, 0).
 
+%% solucao(+Q) is semidet
+% Verdadeiro se Q é uma solução N-rainhas
+% Este predicado apenas verifica se Q é uma solução, e não a constrói.
+% Exemplo:
+%  ?- solucao([4, 5, 3, 2, 1]).
+%   true.
+solucao(Q) :-
+	not_repetidos(Q),
+	seguro(Q),
+	!.
+
+% sequencia(+I, +F, ?S) is semidet
+% Verdadeiro se S é uma lista com os números inteiros entre I e F (inclusive)
+sequencia(I, F, R1) :-
+	findall(R,between(I,F,R), R1)	.
+
+not_repetidos([]):-
+	true.
+
+not_repetidos([X|XS]) :-
+	not(member(X, XS)),
+	not_repetidos(XS).
+
 %% entre(+I, +F, ?V) is nondet
 % Verdadeiro se V é um número natural entre I e F (inclusive).
 % Exemplo:
@@ -53,40 +73,19 @@ entre(I, F, V) :-
 	V >= I,
 	V =< F.
 
-%% solucao(+Q) is semidet
-% Verdadeiro se Q é uma solução N-rainhas
-% Este predicado apenas verifica se Q é uma solução, e não a constrói.
-% Exemplo:
-%  ?- solucao([4, 5, 3, 2, 1]).
-%   true.
+seguro([]).
 
-solucao(Q) :-
-	not_repetidos(Q),
-	length(Q, X),
-	sequencia(1, X, Q), !.
+seguro([L|Ls]) :-
+  not_proibido(L, Ls,1),
+  seguro(Ls).
 
-% sequencia(+I, +F, ?S) is semidet
-% Verdadeiro se S é uma lista com os números inteiros entre I e F (inclusive)
+not_proibido(_,[],_).
 
-sequencia(_I, _F, []) :-
-	true.
-
-sequencia(I, F, [X|XS]) :-
-	entre(I,F,X),
-	sequencia(I, F, XS), !.
-
-not_repetidos([]):-
-	true.
-
-not_repetidos([X|XS]) :-
-	not(member(X, XS)),
-	not_repetidos(XS).
-
-% mesma_coluna():-
-%	/* ... ou duas rainhas na mesma diagonal */
-%     (abs(rainhas[i] - rainhas[k]) == (k - i)))
-% .
-
+not_proibido(Y,[Y1|Ys],Coluna_Atual) :-
+ Y1-Y=\=Coluna_Atual,
+ Y-Y1=\=Coluna_Atual,
+ Prox_Coluna is Coluna_Atual + 1,
+ not_proibido(Y,Ys,Prox_Coluna).
 
 
 
