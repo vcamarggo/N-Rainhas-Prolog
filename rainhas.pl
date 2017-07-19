@@ -9,17 +9,6 @@ rainhas_p(Q, N) :-
 	solucao(Q).
 
 
-% sequencia(+I, +F, ?S) is semidet
-% Verdadeiro se S é uma lista com os números inteiros entre I e F (inclusive)
-sequencia(I, F, []) :-
-	true.
-
-sequencia(I, F, [X|XS]) :-
-	sequencia(I, F, XS),
-	entre(I,F,X),
-	true.
-
-
 % permutacao(?L, ?P) is nondet
 % Verdadeiro se P é uma permutação da lista L
 permutacao(L, P) :-
@@ -61,9 +50,8 @@ rainhas_n([], _, 0).
 %  V = 3;
 %  false.
 entre(I, F, V) :-
-	V > I,
-	V =< F,
-	true.
+	V >= I,
+	V =< F.
 
 %% solucao(+Q) is semidet
 % Verdadeiro se Q é uma solução N-rainhas
@@ -71,11 +59,33 @@ entre(I, F, V) :-
 % Exemplo:
 %  ?- solucao([4, 5, 3, 2, 1]).
 %   true.
+
 solucao(Q) :-
-	% ... continuar
-	.
+	not_repetidos(Q),
+	length(Q, X),
+	sequencia(1, X, Q), !.
 
+% sequencia(+I, +F, ?S) is semidet
+% Verdadeiro se S é uma lista com os números inteiros entre I e F (inclusive)
 
+sequencia(_I, _F, []) :-
+	true.
+
+sequencia(I, F, [X|XS]) :-
+	entre(I,F,X),
+	sequencia(I, F, XS), !.
+
+not_repetidos([]):-
+	true.
+
+not_repetidos([X|XS]) :-
+	not(member(X, XS)),
+	not_repetidos(XS).
+
+% mesma_coluna():-
+%	/* ... ou duas rainhas na mesma diagonal */
+%     (abs(rainhas[i] - rainhas[k]) == (k - i)))
+% .
 
 
 
