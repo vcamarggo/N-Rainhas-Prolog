@@ -52,7 +52,7 @@ solucao(Q) :-
 % sequencia(+I, +F, ?S) is semidet
 % Verdadeiro se S é uma lista com os números inteiros entre I e F (inclusive)
 sequencia(I, F, R1) :-
-	findall(R,between(I,F,R), R1)	.
+	findall(R,entre(I,F,R), R1)	.
 
 not_repetidos([]):-
 	true.
@@ -70,8 +70,7 @@ not_repetidos([X|XS]) :-
 %  V = 3;
 %  false.
 entre(I, F, V) :-
-	V >= I,
-	V =< F.
+	between(I,F,V).
 
 seguro([]).
 
