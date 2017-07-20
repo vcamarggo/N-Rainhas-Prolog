@@ -10,8 +10,12 @@ rainhas_p(Q, N) :-
 
 % permutacao(?L, ?P) is nondet
 % Verdadeiro se P é uma permutação da lista L
-permutacao(L, P) :-
-	permutation(L,P).
+
+permutacao([], []).
+
+permutacao(L, [X|T]) :-
+    select(X, L, R),
+    permutacao(R, T).
 
 %% -------------------------- VERSÃO COM BACKTRACKING --------------------------
 % rainhas_n(?Q, +N) is nondet
@@ -58,7 +62,7 @@ not_repetidos([]):-
 	true.
 
 not_repetidos([X|XS]) :-
-	not(member(X, XS)),
+	not(membro(X, XS)),
 	not_repetidos(XS).
 
 %% entre(+I, +F, ?V) is nondet
@@ -69,25 +73,41 @@ not_repetidos([X|XS]) :-
 %  V = 2;
 %  V = 3;
 %  false.
+
 entre(I, F, V) :-
-	between(I,F,V).
+	I < F,
+	V = I.
+
+entre(I, F, V) :-
+	I == F, !,
+	V = I.
+
+entre(I, F, V) :-
+	I < F,
+	I1 is I+1,
+	entre(I1, F, V).
+
 
 seguro([]).
 
 seguro([L|Ls]) :-
-  not_proibido(L, Ls,1),
-  seguro(Ls).
+	not_proibido(L, Ls,1),
+	seguro(Ls).
 
 not_proibido(_,[],_).
 
 not_proibido(Y,[Y1|Ys],Coluna_Atual) :-
- Y1-Y=\=Coluna_Atual,
- Y-Y1=\=Coluna_Atual,
- Prox_Coluna is Coluna_Atual + 1,
- not_proibido(Y,Ys,Prox_Coluna).
+	Y1-Y=\=Coluna_Atual,
+	Y-Y1=\=Coluna_Atual,
+	Prox_Coluna is Coluna_Atual + 1,
+	not_proibido(Y,Ys,Prox_Coluna).
 
 
 
+membro(X, [X | _]).
+
+membro(X, [_ | XS]) :-
+    membro(X, XS).
 
 
 
