@@ -14,7 +14,7 @@ rainhas_p(Q, N) :-
 permutacao([], []).
 
 permutacao(L, [X|T]) :-
-    select(X, L, R),
+    x_select(X, L, R),
     permutacao(R, T).
 
 %% -------------------------- VERSÃO COM BACKTRACKING --------------------------
@@ -32,7 +32,7 @@ rainhas_n(Q, N) :-
 %  Q = [4, 2, 5, 3, 1] ;
 %  Q = [3, 5, 2, 4, 1] ;
 %  Q = [5, 3, 1, 4, 2] ;
-%  ...
+
 rainhas_n([R|Rs], N, T) :-
 	T > 0, !,
 	T0 is T-1,
@@ -48,6 +48,7 @@ rainhas_n([], _, 0).
 % Exemplo:
 %  ?- solucao([4, 5, 3, 2, 1]).
 %   true.
+
 solucao(Q) :-
 	not_repetidos(Q),
 	seguro(Q),
@@ -56,7 +57,14 @@ solucao(Q) :-
 % sequencia(+I, +F, ?S) is semidet
 % Verdadeiro se S é uma lista com os números inteiros entre I e F (inclusive)
 sequencia(I, F, R1) :-
-	findall(R,entre(I,F,R), R1)	.
+	x_findall(I, F, R1)	.
+
+% not_repetido(?L)
+%
+% Verdadeiro se L é uma lista sem elementos repetidos
+% Exemplo:
+%  not_repetidos([1,2,1]).
+%  false.
 
 not_repetidos([]):-
 	true.
@@ -87,6 +95,12 @@ entre(I, F, V) :-
 	I1 is I+1,
 	entre(I1, F, V).
 
+%seguro(?L)
+%
+%Verdadeiro se L é uma lista com elementos permitidos para a solução
+% Exemplio:
+%  ?- seguro([2,4,3,1]).
+%  true.
 
 seguro([]).
 
@@ -102,12 +116,48 @@ not_proibido(Y,[Y1|Ys],Coluna_Atual) :-
 	Prox_Coluna is Coluna_Atual + 1,
 	not_proibido(Y,Ys,Prox_Coluna).
 
-
+% membro(?X, ?XS) is nondet
+%
+% Verdadeiro se X é um elemento de XS
+% Exemplo:
+%  ?- Membro(3, [1,2,3].
+%  true.
 
 membro(X, [X | _]).
 
 membro(X, [_ | XS]) :-
     membro(X, XS).
+
+
+
+x_select(El,[El|T],T).
+x_select(El,[H|T],[H|S]) :-
+      x_select(El,T,S).
+
+% x_findall(+I,+F,-R).
+%
+% Verdadeiro se R é uma lista com com valores ordenados entre I e F.
+% Exemplo:
+%  ?- x_findall(1,3,R).
+%  R = [1,2,3].
+
+x_findall(X,X,R):-
+	R = [X], !.
+
+x_findall(I,F,R) :-
+	I1 is I + 1,
+	x_findall(I1, F, R1),
+	R = [I | R1].
+
+
+
+
+
+
+
+
+
+
 
 
 
