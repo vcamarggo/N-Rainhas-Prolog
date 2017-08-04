@@ -59,7 +59,7 @@ solucao(Q) :-
 sequencia(I, F, R1) :-
 	x_findall(I, F, R1)	.
 
-% not_repetido(?L)
+% not_repetido(?L) is det
 %
 % Verdadeiro se L é uma lista sem elementos repetidos
 % Exemplo:
@@ -95,7 +95,7 @@ entre(I, F, V) :-
 	I1 is I+1,
 	entre(I1, F, V).
 
-%seguro(?L)
+%seguro(?L) is det
 %
 %Verdadeiro se L é uma lista com elementos permitidos para a solução
 % Exemplio:
@@ -108,6 +108,12 @@ seguro([L|Ls]) :-
 	not_proibido(L, Ls,1),
 	seguro(Ls).
 
+% not_probido(+Y, +L, +Coluna_atual). is det
+%
+% Verdadeiro se é seguro adicionar Y em L considerando a Coluna Atual
+% Exemplo.
+%  not_proibido(4, [1,3,2], 4).
+%  true.
 not_proibido(_,[],_).
 
 not_proibido(Y,[Y1|Ys],Coluna_Atual) :-
@@ -129,12 +135,18 @@ membro(X, [_ | XS]) :-
     membro(X, XS).
 
 
+% x_select(?El, +L, -T). is non det
+%
+% Verdadeiro se El é removido de L e se torna T
+% Exemplo:
+%  x_select(1, [1,2,3], T).
+%  T = [2,3]
 
 x_select(El,[El|T],T).
 x_select(El,[H|T],[H|S]) :-
       x_select(El,T,S).
 
-% x_findall(+I,+F,-R).
+% x_findall(+I,+F,-R). is det
 %
 % Verdadeiro se R é uma lista com com valores ordenados entre I e F.
 % Exemplo:
